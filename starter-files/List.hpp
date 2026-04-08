@@ -453,7 +453,47 @@ typename List<T>::Iterator List<T>::end() const {
   //         element erased by the function call
 template <typename T>
 typename List<T>::Iterator List<T>::erase(Iterator i) {
- // write
+
+  if(i.nodePtr == nullptr){
+    return i;
+  }
+
+  // iterate list size.
+  --Lsize;
+
+  if(Lsize == 0){
+    first = nullptr;
+    last = nullptr;
+    delete i.nodePtr;
+    return end();
+  }
+
+  if(i.nodePtr == first){
+    i.nodePtr = first->next;
+    delete i.nodePtr->prev;
+    first = i.nodePtr;
+    first->prev = nullptr;
+    return i;
+  }
+
+  if(i.nodePtr == last){
+    i.nodePtr = last->prev;
+    delete i.nodePtr->next;
+    last = i.nodePtr;
+    last->next = nullptr;
+    return i;
+  }
+
+  Iterator temp = i;
+
+  i.nodePtr->prev->next = i.nodePtr->next;
+  i.nodePtr->next->prev = i.nodePtr->prev;
+  i.nodePtr = i.nodePtr->next;
+
+  delete temp.nodePtr;
+
+  return i;
+
 }
 
 
@@ -463,7 +503,34 @@ typename List<T>::Iterator List<T>::erase(Iterator i) {
   //         Returns an iterator to the the newly inserted element.
 template <typename T>
 typename List<T>::Iterator List<T>::insert(Iterator i, const T &datum) {
- // write
+  
+  if(i.nodePtr == nullptr){
+    push_back(datum);
+    i.nodePtr = last;
+    return i;
+  }
+
+  if(i.nodePtr == first){
+    push_front(datum);
+    i.nodePtr = first;
+    return i;
+  }
+  
+  Node *n = new Node;
+
+  n->datum = datum;
+  // prev norhtingn, next first
+  n->prev = i.nodePtr->prev;
+  n->next = i.nodePtr;
+
+  i.nodePtr->prev = n;
+  n->prev->next = n;
+
+  // iterate list size. 
+  ++Lsize;
+
+  i.nodePtr = n;
+  return i;
 }
 
 
