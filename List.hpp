@@ -481,7 +481,7 @@ typename List<T>::Iterator List<T>::erase(Iterator i) {
     delete i.nodePtr->next;
     last = i.nodePtr;
     last->next = nullptr;
-    return i;
+    return end();
   }
 
   Iterator temp = i;
