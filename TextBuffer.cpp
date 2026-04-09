@@ -92,21 +92,16 @@ TextBuffer::TextBuffer() : data(), row(1), column(0), index(0){
   //          if appropriate to maintain all invariants.
   bool TextBuffer::remove() {
     
-    if(cursor == data.end()){
+   if(cursor == data.end()){
         return false;
     }
 
-    
-    if(*cursor == '\n'){
-        cursor = data.erase(cursor);
-        column = compute_column();
-        row--;
-    } 
-    else{
-        cursor = data.erase(cursor);
-    }
+    bool wasNewline = (*cursor == '\n');
+    cursor = data.erase(cursor);
+   if (wasNewline) {
+      column = compute_column();
 
-    index--;
+    }
     return true;
 
   }
@@ -128,7 +123,8 @@ TextBuffer::TextBuffer() : data(), row(1), column(0), index(0){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
   void TextBuffer::move_to_row_end() {
-    while (*cursor != '\n' && cursor != data.end()) {
+    while (cursor != data.end() && *cursor != '\n') {
+      
         forward();
     }
   }
@@ -145,11 +141,8 @@ TextBuffer::TextBuffer() : data(), row(1), column(0), index(0){
   void TextBuffer::move_to_column(int new_column) {
     move_to_row_start();
 
-    for(int i = 0; i < new_column; i++){
+    while (column < new_column && cursor != data.end() && *cursor != '\n') {    
         forward();
-        if(*cursor == '\n' || cursor == data.end()){
-            break;
-        }
     }
   }
 
